@@ -3,13 +3,13 @@ const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const { response } = require("express");
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
 
 app.use(cors());
 app.use(express.json());
 
-const uri =
-  "mongodb+srv://groceryShop:XmVbPIFjBxxqzYY2@cluster0.657ma.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const uri = `mongodb+srv://groceryShop:${process.env.PASS}@cluster0.657ma.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -22,9 +22,21 @@ async function run() {
     const productCollection = client.db("grocery-shop").collection("product");
     const feedbackCollection = client.db("grocery-shop").collection("feedback");
 
+    // Auth
+    app.post("/login", async (req, res) => {
+      const user = req.body;
+
+      const accessToken = jwt.sign(user, process.env.TOKEN, {
+        expiresIn: "2d",
+      });
+
+      res.send({ accessToken });
+    });
+
     //==============All Product Load==================
     app.get("/products", async (req, res) => {
-      const query = {};
+      const email = req.query.email;
+      const query = { email };
       const cursor = productCollection.find(query);
       const products = await cursor.toArray();
       res.send(products);
