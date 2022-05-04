@@ -32,11 +32,12 @@ async function run() {
 
     //=================Product Add=================
     app.post("/products", async (req, res) => {
-      const product = req.body.data;
-      const { name, image, price, quantity, selerName, text } = product;
+      const product = req.body.product;
       console.log(product);
+      const { name, image, price, quantity, selerName, text, email } = product;
 
       const doc = {
+        email,
         name,
         image,
         price,
