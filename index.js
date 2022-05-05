@@ -49,11 +49,28 @@ async function run() {
 
     //==============All Product Load==================
     app.get("/products", async (req, res) => {
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+
       const query = {};
       const cursor = productCollection.find(query);
-      const products = await cursor.toArray();
+      let products;
+      if (page || size) {
+        products = await cursor
+          .skip(page * size)
+          .limit(size)
+          .toArray();
+      } else {
+        products = await cursor.toArray();
+      }
       res.send(products);
     });
+    //================All Product count==============
+    app.get("/count", async (req, res) => {
+      const count = await productCollection.estimatedDocumentCount();
+      res.send({ count });
+    });
+
     //==============MY Items Product Load==================
     app.get("/items", verifyToken, async (req, res) => {
       const decodedEmail = req.decoded.email;
