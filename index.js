@@ -88,9 +88,7 @@ async function run() {
     //=================Product Add=================
     app.post("/products", async (req, res) => {
       const product = req.body.product;
-      console.log(product);
       const { name, image, price, quantity, selerName, text, email } = product;
-
       const doc = {
         email,
         name,
@@ -112,21 +110,33 @@ async function run() {
       res.send(product);
     });
 
-    //Quantity Update
-    // app.put("/products/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const filter = { _id: ObjectId(id) };
+    // Quantity Update
+    app.put("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateQuantity = req.body;
+      const { name, price, quantity, text, image, selerName } =
+        updateQuantity?.productInfo;
+      const filter = { _id: ObjectId(id) };
 
-    //   const options = { upsert: true };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          name: name,
+          price: price,
+          quantity: quantity,
+          selerName: selerName,
+          text: text,
+          image: image,
+        },
+      };
 
-    //   const updateDoc = {};
-    //   const result = await productCollection.updateOne(
-    //     filter,
-    //     updateDoc,
-    //     options
-    //   );
-    //   res.send(result);
-    // });
+      const result = await productCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
 
     // Product Delete
     app.delete("/products/:id", async (req, res) => {
