@@ -156,7 +156,7 @@ async function run() {
   } finally {
   }
 }
-run().catch((error) => console.dir);
+run().catch(console.dir);
 app.get("/", (req, res) => {
   res.send("My first check");
 });
