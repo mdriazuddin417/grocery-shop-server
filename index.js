@@ -50,10 +50,12 @@ async function run() {
     app.get("/products", async (req, res) => {
       const page = parseInt(req.query.page);
       const size = parseInt(req.query.size);
+      console.log(size);
 
       const query = {};
       const cursor = productCollection.find(query);
       let products;
+
       if (page || size) {
         products = await cursor
           .skip(page * size)
